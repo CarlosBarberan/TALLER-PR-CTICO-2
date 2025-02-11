@@ -88,7 +88,7 @@ export const LoginScreen = () => {
                     accionIcon={() => setHiddenPassword(!hiddenPassword)}
                 />
                 <ButtonComponent textButton='Iniciar Sesion' onPress={handleLogin} />
-                <Text >¿No tienes una cuenta? Regístrate ahora</Text>
+                <Text style={styles.texturl}>¿No tienes una cuenta? Regístrate ahora</Text>
             </BodyComponent>
         </View>
     );

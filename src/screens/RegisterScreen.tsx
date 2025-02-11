@@ -40,7 +40,7 @@ export const RegisterScreen = () => {
                                 handleSetValues={setEmail}
                                 fieldKey="email"
                             />
-            <InputComponent
+            <InputComponent 
                                 placeholder="Contraseña"
                                 handleSetValues={setPassword}
                                 fieldKey="password"
@@ -54,7 +54,7 @@ export const RegisterScreen = () => {
 
 
             }/>
-            <Text>¿Ya tienes una cuenta? Inicia sesión ahora</Text>
+            <Text style={styles.texturl}>¿Ya tienes una cuenta? Inicia sesión ahora</Text>
             </BodyComponent>
             
         </View>
