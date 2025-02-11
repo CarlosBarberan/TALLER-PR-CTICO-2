@@ -21,6 +21,8 @@ export const LoginScreen = () => {
     const [hiddenPassword, setHiddenPassword] = useState<boolean>(true);
 
     const handleSetValues = (fieldKey: keyof FormLogin, value: string) => {
+        console.log(fieldKey)
+        console.log(value)
         setFormLogin(prevState => ({
             ...prevState,
             [fieldKey]: value,
