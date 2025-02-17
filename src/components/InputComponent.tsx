@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextInput, View } from 'react-native';
 import { FormLogin } from '../screens/LoginScreen';
+// @ts-ignore
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { styles } from '../theme/appTheme';
 

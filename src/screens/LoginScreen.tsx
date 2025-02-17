@@ -1,69 +1,70 @@
-import React, { useState } from 'react';
-import { Text, View, Alert, Button, TextComponent } from 'react-native';
+import React, { useCallback, useReducer, useState } from 'react';
+import { Text, View, Alert, TouchableOpacity } from 'react-native';
 import { styles } from '../theme/appTheme';
 import { InputComponent } from '../components/InputComponent';
 import { BodyComponent } from '../components/BodyComponent';
 import { ButtonComponent } from '../components/ButtonComponent';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList, User } from '../navigator/DrawerNavigator';
 
 export interface FormLogin {
     user: string;
     email: string;
     password: string;
+    phoneNumber: string;
+    confirmPassword: string;
 }
 
-export const LoginScreen = () => {
-    const [formLogin, setFormLogin] = useState<FormLogin>({
-        user: '',
-        password: '',
-        email: '',
-    });
+interface Props{
+    users: User[];
+}
 
+const initialState: FormLogin = {
+    user: '',
+    email: '',
+    password: '',
+    phoneNumber: '',
+    confirmPassword: '',
+};
+
+const formReducer = (state: FormLogin, action: { type: keyof FormLogin; value: string }) => {
+    return { ...state, [action.type]: action.value };
+};
+
+
+
+export const LoginScreen = ({ users}:Props) => {
+    const [formLogin, dispatch] = useReducer(formReducer, initialState);
     const [hiddenPassword, setHiddenPassword] = useState<boolean>(true);
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-    const handleSetValues = (fieldKey: keyof FormLogin, value: string) => {
-        console.log(fieldKey)
-        console.log(value)
-        setFormLogin(prevState => ({
-            ...prevState,
-            [fieldKey]: value,
-        })
+    const handleSetValues = useCallback((fieldKey: keyof FormLogin, value: string) => {
+        dispatch({ type: fieldKey, value });
+    }, []);
+
+
+    const verifyUser = useCallback(() => {
+        return users.some(
+            (user) => user.email === formLogin.email && user.password === formLogin.password && user.user === formLogin.user
         );
-    };
+    }, [formLogin]);
 
-    interface User {
-        id: number,
-        user: string,
-        password: string,
-        email: string
-    }
-
-    const users: User[] = [
-        { id: 1, password: 'asd', user: 'asd', email: 'asd' }
-    ]
-
-    const verifyUser = () => {
-        const existUser = users.filter(
-            user => user.email == formLogin.email && user.password == formLogin.password && user.user == formLogin.user
-        );
-        return existUser;
-    }
-
-    const handleLogin = () => {
+    const handleLogin = useCallback(() => {
         const { user, password, email } = formLogin;
-    
-        if (user.trim() === '' || password.trim() === '' || email.trim() === '') {
+
+        if (!user.trim() || !password.trim() || !email.trim()) {
             Alert.alert('Error', 'Todos los campos son obligatorios');
             return;
-        } else {
-            const existUser = verifyUser();
-            if (existUser.length === 0) {
-                Alert.alert('Error', 'Datos Incorrectos');
-                return;
-            } else {
-                Alert.alert('Inicio de sesión exitoso', `Bienvenido, ${user}!`);
-            }
         }
-    }
+
+        if (!verifyUser()) {
+            Alert.alert('Error', 'Datos Incorrectos');
+            return;
+        }
+
+        Alert.alert('Inicio de sesión exitoso', `Bienvenido, ${user}!`);
+        navigation.navigate('Home')
+    }, [formLogin, verifyUser]);
 
     return (
         <View>
@@ -90,7 +91,11 @@ export const LoginScreen = () => {
                     accionIcon={() => setHiddenPassword(!hiddenPassword)}
                 />
                 <ButtonComponent textButton='Iniciar Sesion' onPress={handleLogin} />
-                <Text style={styles.texturl}>¿No tienes una cuenta? Regístrate ahora</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                    <Text style={[styles.texturl]}>
+                        ¿No tienes una cuenta? Regístrate ahora
+                    </Text>
+                </TouchableOpacity>
             </BodyComponent>
         </View>
     );

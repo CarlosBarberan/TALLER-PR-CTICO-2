@@ -7,7 +7,8 @@ export const BodyComponent = (props: any) => {
     return (
         <View style={{
             ...styles.contentBody,
-            height: height * 0.76
+            height: height * 0.76,
+            paddingHorizontal: props.noPadding ? 0 : styles.contentBody.paddingHorizontal
         }}>
             {props.children}
         </View>
